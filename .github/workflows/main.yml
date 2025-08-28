@@ -2,36 +2,41 @@ name: Gradle CI
 
 on:
   push:
-    branches: [ "main" ]   # Run on push to main
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]   # Run on PRs to main
-  workflow_dispatch:        # Allow manual runs
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
     name: Build process
-    runs-on: ubuntu-latest  # Use GitHub-hosted Ubuntu runner
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repo
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Java
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: temurin   # Options: temurin, zulu, adopt, etc.
-          java-version: '21'      # Or 11, 21 depending on your project
+          distribution: temurin
+          java-version: '21'
 
-      # Step 3: Cache Gradle dependencies (optional but faster)
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        env:
-          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
-      - name: Build with Gradle
-        run: ./gradlew build
+        uses: gradle/actions/setup-gradle@v4.4.2
 
-      # Step 6: Run tests (separate step for clarity)
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build with Gradle (inject secret via ENV)
+        env:
+          QUARKUS_REST_CLIENT_WEATHER_OPENAPI_APIKEY: ${{ secrets.OPENWEATHER_API_KEY }}
+        run: ./gradlew clean build --stacktrace
+
       - name: Run tests
-        run: ./gradlew test
+        env:
+          QUARKUS_REST_CLIENT_WEATHER_OPENAPI_APIKEY: ${{ secrets.OPENWEATHER_API_KEY }}
+        run: ./gradlew test --stacktrace
