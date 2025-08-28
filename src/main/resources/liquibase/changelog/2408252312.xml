@@ -1,0 +1,61 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="An Tran" id="2408252312-1">
+        <createTable tableName="open_weather_map_response">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="coord_lon" type="DOUBLE PRECISION" />
+            <column name="coord_lat" type="DOUBLE PRECISION" />
+            <column name="base" type="VARCHAR(255)" />
+            <column name="main_temp" type="DOUBLE PRECISION" />
+            <column name="main_feels_like" type="DOUBLE PRECISION" />
+            <column name="main_temp_min" type="DOUBLE PRECISION" />
+            <column name="main_temp_max" type="DOUBLE PRECISION" />
+            <column name="main_pressure" type="BIGINT" />
+            <column name="main_humidity" type="BIGINT" />
+            <column name="main_sea_level" type="BIGINT" />
+            <column name="main_grnd_level" type="BIGINT" />
+            <column name="visibility" type="BIGINT" />
+            <column name="wind_speed" type="DOUBLE PRECISION" />
+            <column name="wind_deg" type="BIGINT" />
+            <column name="clouds_all" type="BIGINT" />
+            <column name="dt" type="BIGINT" />
+            <column name="sys_type" type="BIGINT" />
+            <column name="sys_id" type="BIGINT" />
+            <column name="sys_country" type="VARCHAR(255)" />
+            <column name="sys_sunrise" type="BIGINT" />
+            <column name="sys_sunset" type="BIGINT" />
+            <column name="timezone" type="BIGINT" />
+            <column name="city_id" type="BIGINT" />
+            <column name="name" type="VARCHAR(255)" />
+            <column name="cod" type="BIGINT" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="An Tran" id="2408252312-2">
+        <createTable tableName="weather_domain">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="weather_id" type="BIGINT" />
+            <column name="main" type="VARCHAR(255)" />
+            <column name="description" type="VARCHAR(255)" />
+            <column name="icon" type="VARCHAR(255)" />
+            <column name="open_weather_map_response_id" type="BIGINT" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="open_weather_map_response_id"
+                                 baseTableName="weather_domain"
+                                 constraintName="fk_weather_domain_open_weather_map_response"
+                                 referencedColumnNames="id"
+                                 referencedTableName="open_weather_map_response"/>
+    </changeSet>
+</databaseChangeLog>

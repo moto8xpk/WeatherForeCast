@@ -1,0 +1,33 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="An Tran" id="2408260001-1">
+        <createTable tableName="cities">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)" />
+            <column name="country_code" type="VARCHAR(2)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="An Tran" id="2408260001-2">
+        <insert tableName="cities">
+            <column name="name" value="Ho Chi Minh City" />
+            <column name="country_code" value="VN" />
+        </insert>
+        <insert tableName="cities">
+            <column name="name" value="Da Nang" />
+            <column name="country_code" value="VN" />
+        </insert>
+        <insert tableName="cities">
+            <column name="name" value="Hanoi" />
+            <column name="country_code" value="VN" />
+        </insert>
+    </changeSet>
+</databaseChangeLog>
