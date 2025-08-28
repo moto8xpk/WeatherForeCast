@@ -1,0 +1,35 @@
+name: Gradle CI
+
+on:
+  push:
+    branches: [ "main" ]   # Run on push to main
+  pull_request:
+    branches: [ "main" ]   # Run on PRs to main
+  workflow_dispatch:        # Allow manual runs
+
+jobs:
+  build:
+    name: Build process
+    runs-on: ubuntu-latest  # Use GitHub-hosted Ubuntu runner
+
+    steps:
+      # Step 1: Checkout the repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin   # Options: temurin, zulu, adopt, etc.
+          java-version: '21'      # Or 11, 21 depending on your project
+
+      # Step 3: Cache Gradle dependencies (optional but faster)
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # Step 6: Run tests (separate step for clarity)
+      - name: Run tests
+        run: ./gradlew test
