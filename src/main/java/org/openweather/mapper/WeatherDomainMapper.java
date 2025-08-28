@@ -14,10 +14,10 @@ public interface WeatherDomainMapper {
     WeatherDomainMapper INSTANCE = Mappers.getMapper(WeatherDomainMapper.class);
 
     @Mappings({
-            @Mapping(target = "weatherId", source = "id"),
-            @Mapping(target = "main", source = "main"),
-            @Mapping(target = "icon", source = "icon"),
-            @Mapping(target = "description", source = "description")
+//            @Mapping(target = "weatherId", source = "id"),
+//            @Mapping(target = "main", source = "main"),
+//            @Mapping(target = "icon", source = "icon"),
+//            @Mapping(target = "description", source = "description")
     })
     WeatherDomainEntity toEntity(WeatherDomain weatherDomain);
 }
