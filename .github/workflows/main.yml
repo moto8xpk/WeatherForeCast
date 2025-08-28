@@ -27,6 +27,8 @@ jobs:
       # Step 3: Cache Gradle dependencies (optional but faster)
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
       - name: Build with Gradle
         run: ./gradlew build
 
