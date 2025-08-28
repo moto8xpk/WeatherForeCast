@@ -7,7 +7,7 @@ quarkus:
   rest-client:
     weather-openapi:
       url: https://api.openweathermap.org/data/2.5
-      apikey: ${WEATHER_API_KEY}
+      apikey: ${OPENWEATHER_API_KEY}
       default-location: Ho Chi Minh City,vn
 
   datasource:
