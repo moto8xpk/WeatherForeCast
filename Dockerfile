@@ -1,19 +1,18 @@
-# Use a lightweight Java runtime
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /work
 
-# Create a non-root user (id 1001) for better security
-RUN useradd -r -u 1001 quarkus && chown -R quarkus /work
-USER 1001
+# Create group/user with uid/gid 1001 (no home, no password)
+RUN addgroup -S quarkus -g 1001 \
+ && adduser -S -D -H -u 1001 -G quarkus quarkus \
+ && chown -R quarkus:quarkus /work
 
-# Copy all the Quarkus fast-jar files into the container
-COPY build/quarkus-app/lib/ /work/lib/
-COPY build/quarkus-app/*.jar /work/
-COPY build/quarkus-app/app/ /work/app/
-COPY build/quarkus-app/quarkus/ /work/quarkus/
+USER quarkus
 
-# Expose Quarkus port
+# Copy Quarkus fast-jar layout
+COPY --chown=quarkus:quarkus build/quarkus-app/lib/ /work/lib/
+COPY --chown=quarkus:quarkus build/quarkus-app/*.jar /work/
+COPY --chown=quarkus:quarkus build/quarkus-app/app/ /work/app/
+COPY --chown=quarkus:quarkus build/quarkus-app/quarkus/ /work/quarkus/
+
 EXPOSE 8080
-
-# Start the app
 ENTRYPOINT ["java","-jar","/work/quarkus-run.jar"]
