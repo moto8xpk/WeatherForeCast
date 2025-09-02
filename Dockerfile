@@ -1,18 +1,13 @@
-FROM eclipse-temurin:21-jre-alpine
+FROM gcr.io/distroless/java21-debian12
 WORKDIR /work
-
-# Create group/user with uid/gid 1001 (no home, no password)
-RUN addgroup -S quarkus -g 1001 \
- && adduser -S -D -H -u 1001 -G quarkus quarkus \
- && chown -R quarkus:quarkus /work
-
-USER quarkus
+# Run as non-root
+USER 1001
 
 # Copy Quarkus fast-jar layout
-COPY --chown=quarkus:quarkus build/quarkus-app/lib/ /work/lib/
-COPY --chown=quarkus:quarkus build/quarkus-app/*.jar /work/
-COPY --chown=quarkus:quarkus build/quarkus-app/app/ /work/app/
-COPY --chown=quarkus:quarkus build/quarkus-app/quarkus/ /work/quarkus/
+COPY --chown=1001:1001 build/quarkus-app/lib/ /work/lib/
+COPY --chown=1001:1001 build/quarkus-app/*.jar /work/
+COPY --chown=1001:1001 build/quarkus-app/app/ /work/app/
+COPY --chown=1001:1001 build/quarkus-app/quarkus/ /work/quarkus/
 
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/work/quarkus-run.jar"]
