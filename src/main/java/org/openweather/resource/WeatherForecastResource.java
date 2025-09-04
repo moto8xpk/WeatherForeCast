@@ -14,7 +14,7 @@ import org.openweather.service.WeatherService;
 public class WeatherForecastResource {
 
     @Inject
-    private WeatherService weatherService;
+    WeatherService weatherService;
 
     @GET
     @Path("/location")

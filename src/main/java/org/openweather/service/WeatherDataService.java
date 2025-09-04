@@ -17,10 +17,10 @@ import java.util.List;
 public class WeatherDataService {
 
     @Inject
-    private OpenWeatherMapResponseEntityRepository openWeatherMapResponseEntityRepository;
+    OpenWeatherMapResponseEntityRepository openWeatherMapResponseEntityRepository;
 
     @Inject
-    private WeatherDomainEntityRepository weatherDomainEntityRepository;
+    WeatherDomainEntityRepository weatherDomainEntityRepository;
 
     @Transactional
     public void saveWeatherData(OpenWeatherMapResponse data) {

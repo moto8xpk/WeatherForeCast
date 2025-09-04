@@ -9,7 +9,7 @@ import org.openweather.repository.WeatherDomainEntityRepository;
 public class WeatherDomainService {
 
     @Inject
-    private WeatherDomainEntityRepository weatherDomainEntityRepository;
+    WeatherDomainEntityRepository weatherDomainEntityRepository;
 
     public WeatherDomainEntity save(WeatherDomainEntity weatherDomainEntity) {
         return weatherDomainEntityRepository.getEntityManager().merge(weatherDomainEntity);
