@@ -7,6 +7,8 @@ import java.util.List;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OpenWeatherMapResponse implements Serializable {
 
     public CoordDomain coord;
