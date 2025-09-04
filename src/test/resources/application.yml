@@ -1,0 +1,12 @@
+"%test":
+  quarkus:
+    datasource:
+      enabled: false
+      devservices:
+        enabled: false
+    hibernate-orm:
+      enabled: false
+    flyway:
+      migrate-at-start: false
+    liquibase:
+      migrate-at-start: false
