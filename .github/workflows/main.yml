@@ -48,4 +48,5 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=alex-tran \
             -Dsonar.projectKey=alex-tran_WeatherForeCast \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.verbose=true
