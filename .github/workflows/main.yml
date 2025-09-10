@@ -47,6 +47,7 @@ jobs:
           ./gradlew sonar \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=alex-tran \
+            -Dsonar.branch.name=main \
             -Dsonar.projectKey=alex-tran_weatherforecast \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.verbose=true
