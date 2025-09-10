@@ -73,3 +73,13 @@ compileJava {
 compileTestJava {
     options.encoding = 'UTF-8'
 }
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "alex-tran_WeatherForeCast"
+        property "sonar.organization", "alex-tran"
+        property "sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.java.binaries", "${buildDir}/classes/java/main"
+    }
+}
