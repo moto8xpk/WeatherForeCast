@@ -42,7 +42,8 @@ jobs:
         run: ./gradlew test jacocoTestReport
 
       - name: SonarQube/SonarCloud analysis via Gradle
+        if: github.ref == 'refs/heads/main'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: ./gradlew sonarqube -Dsonar.token=$SONAR_TOKEN
+        run: ./gradlew sonar -Dsonar.token=$SONAR_TOKEN
