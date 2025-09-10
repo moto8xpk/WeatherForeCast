@@ -39,7 +39,7 @@ jobs:
       - name: Run tests
         env:
           QUARKUS_REST_CLIENT_WEATHER_OPENAPI_APIKEY: ${{ secrets.OPENWEATHER_API_KEY }}
-        run: ./gradlew test --stacktrace jacocoTestReport
+        run: ./gradlew test jacocoTestReport
 
       - name: SonarQube/SonarCloud analysis via Gradle
         env:
