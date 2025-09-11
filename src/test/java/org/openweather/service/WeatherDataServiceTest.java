@@ -45,10 +45,10 @@ class WeatherDataServiceTest {
 
         OpenWeatherMapResponse dto = new OpenWeatherMapResponse();
         dto.weather = new ArrayList<>();
-        var weather_1 = WeatherDomain.builder().build();
-        var weather_2 = WeatherDomain.builder().build();
-        dto.weather.add(weather_1);
-        dto.weather.add(weather_2);
+        var firstWeather = WeatherDomain.builder().build();
+        var secondWeather = WeatherDomain.builder().build();
+        dto.weather.add(firstWeather);
+        dto.weather.add(secondWeather);
 
         when(childEm.merge(any(WeatherDomainEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0, WeatherDomainEntity.class));
