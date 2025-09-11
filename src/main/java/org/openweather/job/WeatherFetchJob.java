@@ -30,8 +30,7 @@ public class WeatherFetchJob {
     @Inject
     WeatherDomainService weatherDomainService;
 
-//    @Scheduled(cron = "* 0 * * * ?")
-@Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "* 0 * * * ?")
     public void fetchAndStoreWeatherData() {
         List<String> cities = List.of("Ho Chi Minh City", "Da Nang", "Hanoi");
 
