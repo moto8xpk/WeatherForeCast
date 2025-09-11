@@ -41,13 +41,8 @@ jobs:
           QUARKUS_REST_CLIENT_WEATHER_OPENAPI_APIKEY: ${{ secrets.OPENWEATHER_API_KEY }}
         run: ./gradlew test jacocoTestReport
 
-      - name: Sonar (run on main)
-        if: github.ref == 'refs/heads/main'
-        run: |
-          ./gradlew sonar \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.organization=alex-tran \
-            -Dsonar.branch.name=main \
-            -Dsonar.projectKey=moto8xpk_WeatherForeCast \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.verbose=true
+      - name: SonarQube/SonarCloud analysis via Gradle
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: ./gradlew sonar -Dsonar.token=$SONAR_TOKEN
