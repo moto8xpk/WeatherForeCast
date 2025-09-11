@@ -11,8 +11,6 @@ import org.openweather.model.WeatherDomainEntity;
 import org.openweather.repository.OpenWeatherMapResponseEntityRepository;
 import org.openweather.repository.WeatherDomainEntityRepository;
 
-import java.util.List;
-
 @ApplicationScoped
 public class WeatherDataService {
 
