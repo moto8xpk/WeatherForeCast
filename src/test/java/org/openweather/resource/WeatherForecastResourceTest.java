@@ -42,17 +42,17 @@ public class WeatherForecastResourceTest {
         Mockito.verifyNoMoreInteractions(weatherService);
     }
 
-//    @Test
-//    void getWeatherForecast_whenServiceThrows_shouldPropagateAs5xx() {
-//        String location = "Hanoi";
-//        Mockito.when(weatherService.getCurWeather(eq(location)))
-//                .thenThrow(new RuntimeException("Service error"));
-//
-//        given()
-//                .queryParam("location", location)
-//                .when()
-//                .get("/weatherForecast/v1/location")
-//                .then()
-//                .statusCode(500);
-//    }
+    @Test
+    void getWeatherForecast_whenServiceThrows_shouldPropagateAs5xx() {
+        String location = "Hanoi";
+        Mockito.when(weatherService.getCurWeather(eq(location)))
+                .thenThrow(new RuntimeException("Service error"));
+
+        given()
+                .queryParam("location", location)
+                .when()
+                .get("/weatherForecast/v1/location")
+                .then()
+                .statusCode(500);
+    }
 }
