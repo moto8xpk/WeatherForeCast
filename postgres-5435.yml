@@ -1,0 +1,58 @@
+# postgres-5435.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: db                    # <— trùng hostname app dùng
+  namespace: app-demo
+spec:
+  selector:
+    app: postgres
+  ports:
+    - name: db
+      port: 5435              # <— cổng trong cluster mà app sẽ gọi
+      targetPort: 5432        # <— cổng thật trong container postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: app-demo
+spec:
+  serviceName: db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+          readinessProbe:
+            exec: { command: ["sh","-c","pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.0.0.1"] }
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec: { command: ["sh","-c","pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.0.0.1"] }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata: { name: db-data }
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources: { requests: { storage: 5Gi } }

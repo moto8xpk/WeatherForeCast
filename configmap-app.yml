@@ -1,0 +1,18 @@
+# configmap-app.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: app-demo
+data:
+  QUARKUS_PROFILE: "prod"
+  QUARKUS_DATASOURCE_JDBC_ACQUISITION_TIMEOUT: "60S"
+  QUARKUS_REST_CLIENT_WEATHER_OPENAPI_APIKEY: ${OPENWEATHER_API_KEY}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+  namespace: app-demo
+data:
+  POSTGRES_DB: "appdb"

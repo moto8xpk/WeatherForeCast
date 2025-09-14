@@ -1,0 +1,54 @@
+# app.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: quarkus-app
+  namespace: app-demo
+spec:
+  selector:
+    app: quarkus-app
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quarkus-app
+  namespace: app-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quarkus-app
+  template:
+    metadata:
+      labels:
+        app: quarkus-app
+    spec:
+      securityContext:
+        runAsUser: 1001
+        runAsNonRoot: true
+      containers:
+        - name: app
+          image: my-quarkus:jvm
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef: { name: app-config }
+          env:
+            - name: QUARKUS_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: db-secret, key: POSTGRES_PASSWORD }
+            - name: QUARKUS_REST_CLIENT_WEATHER_OPENAPI_APIKEY
+              valueFrom:
+                secretKeyRef: { name: weather-key, key: OPENAPI_KEY }
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
