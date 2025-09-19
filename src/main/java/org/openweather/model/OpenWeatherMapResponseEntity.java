@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -103,7 +105,9 @@ public class OpenWeatherMapResponseEntity implements Serializable {
     @OneToMany(mappedBy = "openWeatherMapResponse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WeatherDomainEntity> weather;
 
-
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     public void setId(Long id) {
         this.id = id;
@@ -211,5 +215,9 @@ public class OpenWeatherMapResponseEntity implements Serializable {
 
     public void setWeather(List<WeatherDomainEntity> weather) {
         this.weather = weather;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

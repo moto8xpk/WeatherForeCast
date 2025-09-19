@@ -33,7 +33,8 @@ public interface OpenWeatherMapResponseMapper {
             @Mapping(target = "sysSunset", source = "sys.sunset"),
             @Mapping(target = "timezone", source = "timezone"),
             @Mapping(target = "cityId", source = "id"),
-            @Mapping(target = "weather", ignore = true)
+            @Mapping(target = "weather", ignore = true),
+            @Mapping(target = "createdAt", ignore = true)
     })
     OpenWeatherMapResponseEntity toEntity(OpenWeatherMapResponse response);
 }
