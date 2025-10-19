@@ -5,17 +5,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.openweather.domain.OpenWeatherMapResponse;
-import org.openweather.mapper.OpenWeatherMapResponseMapper;
-import org.openweather.mapper.WeatherDomainMapper;
-import org.openweather.model.OpenWeatherMapResponseEntity;
-import org.openweather.repository.WeatherDomainEntityRepository;
 import org.openweather.service.WeatherDataService;
-import org.openweather.service.WeatherDomainService;
 import org.openweather.service.WeatherService;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Slf4j
 @ApplicationScoped
@@ -26,9 +20,6 @@ public class WeatherFetchJob {
 
     @Inject
     WeatherDataService weatherDataService;
-
-    @Inject
-    WeatherDomainService weatherDomainService;
 
     @Scheduled(cron = "* 0 * * * ?")
     public void fetchAndStoreWeatherData() {
