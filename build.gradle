@@ -24,15 +24,16 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    implementation 'io.quarkus:quarkus-rest-jackson'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
+    implementation 'io.quarkus:quarkus-rest-jackson'
     // Lombok dependency
     implementation 'org.projectlombok:lombok:1.18.30' // Make sure to use the latest version
 
     // Lombok annotation processor
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
     implementation "io.quarkus:quarkus-config-yaml"
     implementation("io.quarkus:quarkus-micrometer-registry-prometheus")
