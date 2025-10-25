@@ -10,7 +10,16 @@ repositories {
     mavenLocal()
 }
 
+ext {
+    langchain4jVersion = '0.18.0'
+    lombokVersion = '1.18.30'
+    mapstructVersion = '1.5.5.Final'
+}
+
 dependencies {
+    implementation(platform("io.quarkus.platform:quarkus-bom:${langchain4jVersion}"))
+    implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-core:${langchain4jVersion}"
+    implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${langchain4jVersion}"
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-scheduler'
     implementation 'io.quarkus:quarkus-hibernate-orm-panache'
@@ -27,13 +36,13 @@ dependencies {
 
     implementation 'io.quarkus:quarkus-rest-jackson'
     // Lombok dependency
-    implementation 'org.projectlombok:lombok:1.18.30' // Make sure to use the latest version
+    implementation "org.projectlombok:lombok:${lombokVersion}"
 
     // Lombok annotation processor
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
     implementation "io.quarkus:quarkus-config-yaml"
     implementation("io.quarkus:quarkus-micrometer-registry-prometheus")
