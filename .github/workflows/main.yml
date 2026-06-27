@@ -2,9 +2,27 @@ name: Gradle CI
 
 on:
   push:
-    branches: [ "main", "feature/**" ]
+    branches: [ "**" ]
+    paths:
+      - 'src/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'gradle.properties'
+      - 'gradle/**'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - '.github/workflows/**'
   pull_request:
-    branches: [ "main" ]
+    branches: [ "**" ]
+    paths:
+      - 'src/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'gradle.properties'
+      - 'gradle/**'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions:
