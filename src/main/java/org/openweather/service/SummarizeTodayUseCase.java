@@ -10,8 +10,14 @@ import org.openweather.infra.AiSummarizerPort;
 @ApplicationScoped
 public class SummarizeTodayUseCase {
 
-    @Inject WeatherService weatherService;
-    @Inject AiSummarizerPort ai;
+    private final WeatherService weatherService;
+    private final AiSummarizerPort ai;
+
+    @Inject
+    public SummarizeTodayUseCase(WeatherService weatherService, AiSummarizerPort ai) {
+        this.weatherService = weatherService;
+        this.ai = ai;
+    }
 
     public WeatherSummary handle(String city, String lang) {
         String resolvedCity = (city == null || city.isBlank()) ? "Default" : city;

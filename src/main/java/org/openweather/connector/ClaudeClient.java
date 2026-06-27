@@ -42,10 +42,14 @@ public class ClaudeClient implements AiSummarizerPort {
     @ConfigProperty(name = "ai.anthropic.api-key")
     Optional<String> apiKey;
 
-    @Inject
-    ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     private AnthropicClient client;
+
+    @Inject
+    public ClaudeClient(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @PostConstruct
     void init() {
@@ -66,21 +70,27 @@ public class ClaudeClient implements AiSummarizerPort {
     public WeatherSummary summarize(WeatherContext ctx, String city, String lang) {
         try {
             String ctxJson = mapper.writeValueAsString(ctx);
-            String language = (lang == null || lang.isBlank()) ? "vi" : lang;
+            // User-controlled values are sanitized and kept inside the (non-privileged) user
+            // message as data — never concatenated into the system prompt.
+            String language = sanitizeLanguage(lang);
+            String safeCity = sanitizeCity(city);
 
             StructuredMessageCreateParams<WeatherSummary> params = MessageCreateParams.builder()
                     .model(model)
                     .maxTokens(maxTokens)
-                    .system("You are a concise weather assistant. Always answer in " + language + ".")
+                    .system("You are a concise weather assistant. Reply only in the language "
+                            + "identified by the 'Response language code' field of the user message.")
                     .outputConfig(WeatherSummary.class)
                     .addUserMessage("""
+                            Response language code: %s
+                            City: %s
                             Weather context (JSON):
-                            """ + ctxJson + """
+                            %s
 
-                            Task: Summarize today's weather for %s. Produce a WeatherSummary with a short
-                            headline, a brief paragraph, a few actionable tips, and an overall riskLevel of
-                            LOW, MODERATE, or HIGH.
-                            """.formatted(city))
+                            Task: Summarize today's weather for the city above. Produce a WeatherSummary
+                            with a short headline, a brief paragraph, a few actionable tips, and an overall
+                            riskLevel of LOW, MODERATE, or HIGH.
+                            """.formatted(language, safeCity, ctxJson))
                     .build();
 
             return client.messages().create(params).content().stream()
@@ -91,5 +101,22 @@ public class ClaudeClient implements AiSummarizerPort {
         } catch (JsonProcessingException e) {
             throw new AiSummarizationException("Anthropic request serialization failed", e);
         }
+    }
+
+    /** Restrict the language to a BCP-47-like token so it cannot carry prompt instructions. */
+    private static String sanitizeLanguage(String lang) {
+        if (lang == null || lang.isBlank()) {
+            return "vi";
+        }
+        String cleaned = lang.replaceAll("[^A-Za-z-]", "");
+        return cleaned.isBlank() ? "vi" : cleaned;
+    }
+
+    /** Strip line breaks/control characters so a city name cannot inject extra instructions. */
+    private static String sanitizeCity(String city) {
+        if (city == null) {
+            return "";
+        }
+        return city.replaceAll("[\\p{Cntrl}]", " ").trim();
     }
 }

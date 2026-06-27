@@ -27,13 +27,11 @@ class OpenAiClientTest {
 
     @BeforeEach
     void setUp() {
-        client = new OpenAiClient();
         rest = mock(OpenAiRestClient.class);
-        client.client = rest;
+        client = new OpenAiClient(rest, new ObjectMapper().findAndRegisterModules());
         client.model = "gpt-4o-mini";
         client.temperature = 0.2;
         client.maxTokens = 700;
-        client.mapper = new ObjectMapper().findAndRegisterModules();
     }
 
     private static ChatCompletionResponse responseWith(String content) {

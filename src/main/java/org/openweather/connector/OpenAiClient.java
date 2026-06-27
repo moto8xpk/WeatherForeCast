@@ -21,7 +21,8 @@ import java.util.List;
 @IfBuildProperty(name = "ai.provider", stringValue = "openai") // only 1 active provider
 public class OpenAiClient implements AiSummarizerPort {
 
-    @RestClient OpenAiRestClient client;
+    private final OpenAiRestClient client;
+    private final ObjectMapper mapper;
 
     @ConfigProperty(name = "ai.openai.model", defaultValue = "gpt-4o-mini")
     String model;
@@ -30,7 +31,11 @@ public class OpenAiClient implements AiSummarizerPort {
     @ConfigProperty(name = "ai.openai.maxTokens", defaultValue = "700")
     Integer maxTokens;
 
-    @Inject ObjectMapper mapper;
+    @Inject
+    public OpenAiClient(@RestClient OpenAiRestClient client, ObjectMapper mapper) {
+        this.client = client;
+        this.mapper = mapper;
+    }
 
     @Override
     public WeatherSummary summarize(WeatherContext ctx, String city, String lang) {

@@ -24,11 +24,9 @@ class SummarizeTodayUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new SummarizeTodayUseCase();
         weatherService = mock(WeatherService.class);
         ai = mock(AiSummarizerPort.class);
-        useCase.weatherService = weatherService;
-        useCase.ai = ai;
+        useCase = new SummarizeTodayUseCase(weatherService, ai);
         when(weatherService.getCurWeather(any())).thenReturn(new OpenWeatherMapResponse());
     }
 

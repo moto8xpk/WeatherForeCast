@@ -10,8 +10,12 @@ import org.openweather.service.SummarizeTodayUseCase;
 @Produces(MediaType.APPLICATION_JSON)
 public class AiResource {
 
+    private final SummarizeTodayUseCase summarizeToday;
+
     @Inject
-    SummarizeTodayUseCase summarizeToday;
+    public AiResource(SummarizeTodayUseCase summarizeToday) {
+        this.summarizeToday = summarizeToday;
+    }
 
     /**
      * Ví dụ:

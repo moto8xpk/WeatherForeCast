@@ -21,9 +21,8 @@ class AiResourceTest {
 
     @BeforeEach
     void setUp() {
-        resource = new AiResource();
         useCase = mock(SummarizeTodayUseCase.class);
-        resource.summarizeToday = useCase;
+        resource = new AiResource(useCase);
     }
 
     @Test

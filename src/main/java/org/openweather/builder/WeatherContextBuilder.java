@@ -3,6 +3,7 @@ package org.openweather.builder;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openweather.domain.OpenWeatherMapResponse;
 import org.openweather.domain.WeatherContext;
+import org.openweather.domain.WeatherDomain;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -17,40 +18,40 @@ import java.util.List;
  */
 public final class WeatherContextBuilder {
 
+    private static final String WEATHER = "weather";
+    private static final String DEFAULT_CITY = "N/A";
+
     private WeatherContextBuilder() {}
 
     /** Build từ CURRENT WEATHER (service của bạn đang dùng). */
     public static WeatherContext fromCurrent(OpenWeatherMapResponse r, String city) {
-        double lat = (r.getCoord() != null && r.getCoord().getLat() != null) ? r.getCoord().getLat() : Double.NaN;
-        double lon = (r.getCoord() != null && r.getCoord().getLon() != null) ? r.getCoord().getLon() : Double.NaN;
+        var coord = r.getCoord();
+        double lat = coord != null ? orNaN(coord.getLat()) : Double.NaN;
+        double lon = coord != null ? orNaN(coord.getLon()) : Double.NaN;
 
-        double temp      = r.getMain() != null && r.getMain().getTemp() != null ? r.getMain().getTemp() : Double.NaN;
-        double feelsLike = r.getMain() != null && r.getMain().getFeelsLike() != null ? r.getMain().getFeelsLike() : Double.NaN;
-        double humidity  = r.getMain() != null && r.getMain().getHumidity() != null ? r.getMain().getHumidity() : Double.NaN;
+        var main = r.getMain();
+        double temp = main != null ? orNaN(main.getTemp()) : Double.NaN;
+        double feelsLike = main != null ? orNaN(main.getFeelsLike()) : Double.NaN;
+        double humidity = main != null ? orNaN(main.getHumidity()) : Double.NaN;
 
-        double windSpeed = r.getWind() != null && r.getWind().getSpeed() != null ? r.getWind().getSpeed() : 0.0;
-
-        String desc = "";
-        if (r.getWeather() != null && !r.getWeather().isEmpty() && r.getWeather().get(0) != null) {
-            desc = safe(r.getWeather().get(0).getDescription());
-        }
+        var wind = r.getWind();
+        double windSpeed = wind != null ? orZero(wind.getSpeed()) : 0.0;
 
         long epoch = r.getDt() != null ? r.getDt() : System.currentTimeMillis() / 1000;
-        Instant ts = Instant.ofEpochSecond(epoch);
 
         return new WeatherContext(
                 "openweathermap-current",
-                city != null && !city.isBlank() ? city : "N/A",
+                resolveCity(city),
                 lat,
                 lon,
-                ts,
+                Instant.ofEpochSecond(epoch),
                 temp,
                 feelsLike,
                 humidity,
                 Double.NaN,         // current API không có UV
                 windSpeed,
                 Double.NaN,
-                desc,
+                firstDescription(r.getWeather()),
                 List.of()           // current không có hourly
         );
     }
@@ -67,9 +68,7 @@ public final class WeatherContextBuilder {
         double uvIndex   = cur.path("uvi").asDouble(Double.NaN);
         double windSpeed = cur.path("wind_speed").asDouble(0.0);
         double rain1h    = cur.path("rain").path("1h").asDouble(0.0);
-        String desc      = cur.has("weather") && cur.path("weather").isArray() && cur.path("weather").size() > 0
-                ? safe(cur.path("weather").get(0).path("description").asText(""))
-                : "";
+        String desc      = descriptionOf(cur);
 
         long epoch       = cur.path("dt").asLong(System.currentTimeMillis() / 1000);
         Instant ts       = Instant.ofEpochSecond(epoch);
@@ -82,16 +81,13 @@ public final class WeatherContextBuilder {
                 double hTemp = h.path("temp").asDouble(Double.NaN);
                 double hRain = h.path("rain").path("1h").asDouble(0.0);
                 double hWind = h.path("wind_speed").asDouble(0.0);
-                String hDesc = (h.has("weather") && h.path("weather").isArray() && h.path("weather").size() > 0)
-                        ? safe(h.path("weather").get(0).path("description").asText(""))
-                        : "";
-                hours.add(new WeatherContext.ForecastHour(dt, hTemp, hRain, hWind, hDesc));
+                hours.add(new WeatherContext.ForecastHour(dt, hTemp, hRain, hWind, descriptionOf(h)));
             }
         });
 
         return new WeatherContext(
                 "openweather-onecall",
-                city != null && !city.isBlank() ? city : "N/A",
+                resolveCity(city),
                 lat,
                 lon,
                 ts,
@@ -104,6 +100,35 @@ public final class WeatherContextBuilder {
                 desc,
                 hours
         );
+    }
+
+    private static double orNaN(Number v) {
+        return v != null ? v.doubleValue() : Double.NaN;
+    }
+
+    private static double orZero(Number v) {
+        return v != null ? v.doubleValue() : 0.0;
+    }
+
+    private static String resolveCity(String city) {
+        return city != null && !city.isBlank() ? city : DEFAULT_CITY;
+    }
+
+    /** Description from the first element of a CURRENT-WEATHER weather list. */
+    private static String firstDescription(List<WeatherDomain> weather) {
+        if (weather == null || weather.isEmpty() || weather.get(0) == null) {
+            return "";
+        }
+        return safe(weather.get(0).getDescription());
+    }
+
+    /** Description from a One Call node's "weather" array. */
+    private static String descriptionOf(JsonNode node) {
+        JsonNode weather = node.path(WEATHER);
+        if (weather.isArray() && !weather.isEmpty()) {
+            return safe(weather.get(0).path("description").asText(""));
+        }
+        return "";
     }
 
     private static String safe(String s) {
