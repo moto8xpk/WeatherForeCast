@@ -10,7 +10,17 @@ repositories {
     mavenLocal()
 }
 
+ext {
+    langchain4jVersion = '0.18.0'
+    lombokVersion = '1.18.30'
+    mapstructVersion = '1.5.5.Final'
+    anthropicVersion = '2.34.0'
+}
+
 dependencies {
+    implementation(platform("io.quarkus.platform:quarkus-bom:${langchain4jVersion}"))
+    implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-core:${langchain4jVersion}"
+    implementation "io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${langchain4jVersion}"
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-scheduler'
     implementation 'io.quarkus:quarkus-hibernate-orm-panache'
@@ -27,13 +37,16 @@ dependencies {
 
     implementation 'io.quarkus:quarkus-rest-jackson'
     // Lombok dependency
-    implementation 'org.projectlombok:lombok:1.18.30' // Make sure to use the latest version
+    implementation "org.projectlombok:lombok:${lombokVersion}"
 
     // Lombok annotation processor
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    // Official Anthropic (Claude) SDK
+    implementation "com.anthropic:anthropic-java:${anthropicVersion}"
 
     implementation "io.quarkus:quarkus-config-yaml"
     implementation("io.quarkus:quarkus-micrometer-registry-prometheus")
@@ -57,11 +70,28 @@ test {
 jacoco {
     toolVersion = '0.8.12'
 }
+// Classes excluded from coverage: REST-client interfaces (no executable body),
+// MapStruct-generated impls, and the Claude adapter which is a thin wrapper over the
+// external Anthropic SDK (success path only exercisable via an integration test).
+def coverageExclusions = [
+        '**/connector/ClaudeClient*',
+        '**/connector/OpenWeatherMapClient*',
+        '**/connector/OpenAiRestClient*',
+        '**/infra/AiSummarizerPort*',
+        '**/mapper/*MapperImpl*',
+        '**/*$*'
+]
+
 jacocoTestReport {
     dependsOn test
     reports {
         xml.required = true
         html.required = true
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: coverageExclusions)
+        }))
     }
 }
 

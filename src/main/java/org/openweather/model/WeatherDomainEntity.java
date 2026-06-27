@@ -27,36 +27,4 @@ public class WeatherDomainEntity {
     @ManyToOne
     @JoinColumn(name = "open_weather_map_response_id")
     private OpenWeatherMapResponseEntity openWeatherMapResponse;
-
-    public Long getWeatherId() {
-        return weatherId;
-    }
-
-    public void setWeatherId(Long weatherId) {
-        this.weatherId = weatherId;
-    }
-
-    public String getMain() {
-        return main;
-    }
-
-    public void setMain(String main) {
-        this.main = main;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
 }
