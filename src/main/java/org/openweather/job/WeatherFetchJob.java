@@ -41,7 +41,7 @@ public class WeatherFetchJob {
                     }
                 })
                 .exceptionally(ex -> {
-                    log.error(ex.getMessage());
+                    log.error("Failed to fetch/store weather data", ex);
                     return null;
                 });
     }

@@ -4,6 +4,7 @@ import com.anthropic.client.AnthropicClient;
 import com.anthropic.client.okhttp.AnthropicOkHttpClient;
 import com.anthropic.models.messages.MessageCreateParams;
 import com.anthropic.models.messages.StructuredMessageCreateParams;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.arc.properties.IfBuildProperty;
 import jakarta.annotation.PostConstruct;
@@ -13,6 +14,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.openweather.domain.WeatherContext;
 import org.openweather.domain.WeatherSummary;
+import org.openweather.infra.AiSummarizationException;
 import org.openweather.infra.AiSummarizerPort;
 
 import java.util.Optional;
@@ -85,9 +87,9 @@ public class ClaudeClient implements AiSummarizerPort {
                     .flatMap(block -> block.text().stream())
                     .map(typed -> typed.text())
                     .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Claude returned no structured content"));
-        } catch (Exception e) {
-            throw new RuntimeException("Anthropic API call failed", e);
+                    .orElseThrow(() -> new AiSummarizationException("Claude returned no structured content"));
+        } catch (JsonProcessingException e) {
+            throw new AiSummarizationException("Anthropic request serialization failed", e);
         }
     }
 }

@@ -70,11 +70,28 @@ test {
 jacoco {
     toolVersion = '0.8.12'
 }
+// Classes excluded from coverage: REST-client interfaces (no executable body),
+// MapStruct-generated impls, and the Claude adapter which is a thin wrapper over the
+// external Anthropic SDK (success path only exercisable via an integration test).
+def coverageExclusions = [
+        '**/connector/ClaudeClient*',
+        '**/connector/OpenWeatherMapClient*',
+        '**/connector/OpenAiRestClient*',
+        '**/infra/AiSummarizerPort*',
+        '**/mapper/*MapperImpl*',
+        '**/*$*'
+]
+
 jacocoTestReport {
     dependsOn test
     reports {
         xml.required = true
         html.required = true
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: coverageExclusions)
+        }))
     }
 }
 

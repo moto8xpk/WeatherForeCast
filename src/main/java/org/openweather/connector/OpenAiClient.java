@@ -1,5 +1,6 @@
 package org.openweather.connector;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.arc.properties.IfBuildProperty;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -10,6 +11,7 @@ import org.openweather.domain.ChatCompletionRequest;
 import org.openweather.domain.Message;
 import org.openweather.domain.WeatherContext;
 import org.openweather.domain.WeatherSummary;
+import org.openweather.infra.AiSummarizationException;
 import org.openweather.infra.AiSummarizerPort;
 
 
@@ -52,12 +54,12 @@ public class OpenAiClient implements AiSummarizerPort {
 
             var resp = client.chatCompletions(req);
             if (resp == null || resp.choices() == null || resp.choices().isEmpty()) {
-                throw new IllegalStateException("OpenAI returned no choices");
+                throw new AiSummarizationException("OpenAI returned no choices");
             }
             var content = resp.choices().getFirst().message().content();
             return mapper.readValue(extractJson(content), WeatherSummary.class);
-        } catch (Exception e) {
-            throw new RuntimeException("OpenAI REST call failed", e);
+        } catch (JsonProcessingException e) {
+            throw new AiSummarizationException("OpenAI request/response (de)serialization failed", e);
         }
     }
 

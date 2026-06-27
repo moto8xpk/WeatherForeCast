@@ -17,7 +17,8 @@ public interface WeatherDomainMapper {
             @Mapping(target = "weatherId", source = "id"),
             @Mapping(target = "main", source = "main"),
             @Mapping(target = "icon", source = "icon"),
-            @Mapping(target = "description", source = "description")
+            @Mapping(target = "description", source = "description"),
+            @Mapping(target = "openWeatherMapResponse", ignore = true)
     })
     WeatherDomainEntity toEntity(WeatherDomain weatherDomain);
 }
