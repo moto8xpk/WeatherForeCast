@@ -1,4 +1,20 @@
+# Active AI provider is chosen at BUILD time (quarkus.arc @IfBuildProperty).
+# Set provider to "openai" or "claude" and rebuild to switch the active adapter.
+ai:
+  provider: claude
+  openai:
+    model: gpt-4o-mini
+    temperature: 0.2
+    maxTokens: 700
+  anthropic:
+    model: claude-opus-4-8
+    maxTokens: 1024
+    # api-key falls back to the ANTHROPIC_API_KEY env var when unset:
+    api-key: ${ANTHROPIC_API_KEY:}
+
 quarkus:
+  jackson:
+    write-dates-as-timestamps: false
   micrometer:
     export:
       prometheus:
@@ -9,6 +25,25 @@ quarkus:
       url: https://api.openweathermap.org/data/2.5
       apikey: ${OPENWEATHER_API_KEY}
       default-location: Ho Chi Minh City,vn
+      lang: en
+    openai:
+      url: https://api.openai.com
+
+  # NOTE: quarkus-langchain4j is not used by the app code (custom REST client + Anthropic SDK
+  # drive the AI providers). This block only keeps the extension's config resolvable so it
+  # never blocks startup. The active provider is selected by `ai.provider` above, not here.
+  langchain4j:
+    chat-model:
+      provider: openai
+      model-name: gpt-4o-mini
+      temperature: 0.2
+      # max-tokens: 800
+    openai:
+      # Disable the auto-wired langchain4j OpenAI model — the app never injects it,
+      # so it must not require an OpenAI key at startup.
+      enable-integration: false
+      api-key: ${QUARKUS_LANGCHAIN4J_OPENAI_API_KEY:placeholder}
+
 
   datasource:
     db-kind: postgresql

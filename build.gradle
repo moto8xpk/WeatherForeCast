@@ -14,6 +14,7 @@ ext {
     langchain4jVersion = '0.18.0'
     lombokVersion = '1.18.30'
     mapstructVersion = '1.5.5.Final'
+    anthropicVersion = '2.34.0'
 }
 
 dependencies {
@@ -43,6 +44,9 @@ dependencies {
 
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    // Official Anthropic (Claude) SDK
+    implementation "com.anthropic:anthropic-java:${anthropicVersion}"
 
     implementation "io.quarkus:quarkus-config-yaml"
     implementation("io.quarkus:quarkus-micrometer-registry-prometheus")
