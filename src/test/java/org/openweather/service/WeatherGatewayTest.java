@@ -22,9 +22,8 @@ class WeatherGatewayTest {
 
     @BeforeEach
     void setUp() {
-        gateway = new WeatherGateway();
         connector = mock(OpenWeatherMapClient.class);
-        gateway.openWeatherMapClient = connector;
+        gateway = new WeatherGateway(connector);
         gateway.apiKey = "key";
         gateway.lang = "en";
     }

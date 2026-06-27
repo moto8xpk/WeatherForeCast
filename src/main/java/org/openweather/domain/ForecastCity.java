@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 /**
  * City block of the forecast response. {@code timezone} is the shift in seconds from UTC, used by the
  * client to render the 3-hour slots in local time (PRD §8).
@@ -15,7 +13,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ForecastCity implements Serializable {
+public class ForecastCity {
 
     public Integer id;
     public String name;

@@ -26,7 +26,7 @@ public class WeatherForecastResource {
      * @deprecated kept for backward compatibility; new clients should use {@link #current} with a
      * fixed city id (PRD §F1).
      */
-    @Deprecated
+    @Deprecated(since = "1.0", forRemoval = false)
     @GET
     @Path("/location")
     @Consumes(MediaType.APPLICATION_JSON)

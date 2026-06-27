@@ -24,11 +24,15 @@ public class WeatherService {
     @ConfigProperty(name="quarkus.rest-client.weather-openapi.lang", defaultValue = "en")
     String lang;
 
-    @Inject
-    OpenWeatherMapClient openWeatherMapClient;
+    final OpenWeatherMapClient openWeatherMapClient;
+
+    final WeatherGateway weatherGateway;
 
     @Inject
-    WeatherGateway weatherGateway;
+    public WeatherService(OpenWeatherMapClient openWeatherMapClient, WeatherGateway weatherGateway) {
+        this.openWeatherMapClient = openWeatherMapClient;
+        this.weatherGateway = weatherGateway;
+    }
 
     public OpenWeatherMapResponse getCurWeather(String city) {
         String selectedCity = city != null ? city : defaultLocation;

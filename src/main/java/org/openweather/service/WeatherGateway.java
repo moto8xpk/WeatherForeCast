@@ -30,8 +30,12 @@ public class WeatherGateway {
     @ConfigProperty(name = "quarkus.rest-client.weather-openapi.lang", defaultValue = "en")
     String lang;
 
+    final OpenWeatherMapClient openWeatherMapClient;
+
     @Inject
-    OpenWeatherMapClient openWeatherMapClient;
+    public WeatherGateway(OpenWeatherMapClient openWeatherMapClient) {
+        this.openWeatherMapClient = openWeatherMapClient;
+    }
 
     @CacheResult(cacheName = "weather-current")
     @Retry(maxRetries = 2, delay = 1500, delayUnit = ChronoUnit.MILLIS, retryOn = RetryableWeatherException.class)

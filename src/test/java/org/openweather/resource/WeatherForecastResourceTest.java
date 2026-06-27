@@ -75,7 +75,7 @@ public class WeatherForecastResourceTest {
     @Test
     void current_defaultsUnitsToMetric_andCallsService() {
         int cityId = City.HCM.getCityId();
-        Mockito.when(weatherService.getCurrentWeatherById(eq(cityId), eq("metric")))
+        Mockito.when(weatherService.getCurrentWeatherById(cityId, "metric"))
                 .thenReturn(new OpenWeatherMapResponse());
 
         given()
@@ -87,13 +87,13 @@ public class WeatherForecastResourceTest {
                 .contentType(ContentType.JSON)
                 .body(notNullValue());
 
-        Mockito.verify(weatherService).getCurrentWeatherById(eq(cityId), eq("metric"));
+        Mockito.verify(weatherService).getCurrentWeatherById(cityId, "metric");
     }
 
     @Test
     void forecast_passesUnitsThrough() {
         int cityId = City.HA_NOI.getCityId();
-        Mockito.when(weatherService.getForecastById(eq(cityId), eq("imperial")))
+        Mockito.when(weatherService.getForecastById(cityId, "imperial"))
                 .thenReturn(new ForecastResponse());
 
         given()
@@ -105,12 +105,12 @@ public class WeatherForecastResourceTest {
                 .statusCode(200)
                 .contentType(ContentType.JSON);
 
-        Mockito.verify(weatherService).getForecastById(eq(cityId), eq("imperial"));
+        Mockito.verify(weatherService).getForecastById(cityId, "imperial");
     }
 
     @Test
     void current_unknownCity_returns404() {
-        Mockito.when(weatherService.getCurrentWeatherById(eq(999), eq("metric")))
+        Mockito.when(weatherService.getCurrentWeatherById(999, "metric"))
                 .thenThrow(new UnknownCityException(999));
 
         given()
@@ -125,7 +125,7 @@ public class WeatherForecastResourceTest {
     @Test
     void current_invalidUnits_returns400() {
         int cityId = City.DA_NANG.getCityId();
-        Mockito.when(weatherService.getCurrentWeatherById(eq(cityId), eq("kelvin")))
+        Mockito.when(weatherService.getCurrentWeatherById(cityId, "kelvin"))
                 .thenThrow(new InvalidUnitsException("kelvin"));
 
         given()

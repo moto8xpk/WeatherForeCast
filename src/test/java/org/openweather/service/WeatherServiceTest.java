@@ -21,11 +21,9 @@ class WeatherServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new WeatherService();
         connector = mock(OpenWeatherMapClient.class);
         gateway = mock(WeatherGateway.class);
-        service.openWeatherMapClient = connector;
-        service.weatherGateway = gateway;
+        service = new WeatherService(connector, gateway);
         service.apiKey = "key";
         service.defaultLocation = "Ho Chi Minh City,vn";
         service.lang = "en";
@@ -75,8 +73,9 @@ class WeatherServiceTest {
 
     @Test
     void getCurrentWeatherById_invalidUnits_throws() {
+        int cityId = City.HCM.getCityId();
         assertThrows(InvalidUnitsException.class,
-                () -> service.getCurrentWeatherById(City.HCM.getCityId(), "kelvin"));
+                () -> service.getCurrentWeatherById(cityId, "kelvin"));
         verifyNoInteractions(gateway);
     }
 }
