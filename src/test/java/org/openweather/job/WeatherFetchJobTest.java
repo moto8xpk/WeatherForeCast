@@ -9,6 +9,7 @@ import org.openweather.service.WeatherService;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class WeatherFetchJobTest {
@@ -44,5 +45,40 @@ class WeatherFetchJobTest {
         job.fetchAndStoreWeatherData();
 
         verify(weatherDataService, after(500).never()).saveWeatherData(any());
+    }
+
+    @Test
+    void warmCacheOnStartup_whenDisabled_doesNothing() {
+        job.preloadEnabled = false;
+
+        job.warmCacheOnStartup(null);
+
+        verify(weatherService, after(300).never()).getCurrentWeatherById(anyInt(), anyString());
+        verify(weatherService, never()).getForecastById(anyInt(), anyString());
+    }
+
+    @Test
+    void warmCacheOnStartup_whenEnabled_warmsCurrentAndForecastForEveryCity() {
+        job.preloadEnabled = true;
+        when(weatherService.getCurrentWeatherById(anyInt(), anyString()))
+                .thenReturn(new OpenWeatherMapResponse());
+
+        job.warmCacheOnStartup(null);
+
+        // 3 cities -> current + forecast each (async, wait via verify timeout)
+        verify(weatherService, timeout(3000).times(3)).getCurrentWeatherById(anyInt(), eq("metric"));
+        verify(weatherService, timeout(3000).times(3)).getForecastById(anyInt(), eq("metric"));
+    }
+
+    @Test
+    void warmCacheOnStartup_whenServiceFails_doesNotThrow() {
+        job.preloadEnabled = true;
+        when(weatherService.getCurrentWeatherById(anyInt(), anyString()))
+                .thenThrow(new RuntimeException("API down"));
+
+        // Failure is swallowed (logged) so startup is never blocked.
+        job.warmCacheOnStartup(null);
+
+        verify(weatherService, timeout(3000).atLeastOnce()).getCurrentWeatherById(anyInt(), anyString());
     }
 }
