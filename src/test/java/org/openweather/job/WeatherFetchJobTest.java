@@ -7,6 +7,7 @@ import org.openweather.service.WeatherDataService;
 import org.openweather.service.WeatherService;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -27,7 +28,7 @@ class WeatherFetchJobTest {
 
     @Test
     void fetchAndStoreWeatherData_savesEveryCity() {
-        when(weatherService.getCurWeather(anyString())).thenReturn(new OpenWeatherMapResponse());
+        when(weatherService.getCurrentWeatherById(anyInt(), anyString())).thenReturn(new OpenWeatherMapResponse());
 
         job.fetchAndStoreWeatherData();
 
@@ -37,7 +38,7 @@ class WeatherFetchJobTest {
 
     @Test
     void fetchAndStoreWeatherData_whenFetchFails_doesNotSave() {
-        when(weatherService.getCurWeather(anyString()))
+        when(weatherService.getCurrentWeatherById(anyInt(), anyString()))
                 .thenThrow(new RuntimeException("API down"));
 
         job.fetchAndStoreWeatherData();

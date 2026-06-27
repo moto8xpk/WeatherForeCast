@@ -1,10 +1,14 @@
 package org.openweather.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class WindDomain {
     public Double speed;
     public Integer deg;

@@ -15,6 +15,13 @@ ai:
 quarkus:
   jackson:
     write-dates-as-timestamps: false
+  # F6 — cache id-based current/forecast responses 15 min to avoid redundant OpenWeather calls.
+  cache:
+    caffeine:
+      weather-current:
+        expire-after-write: 15M
+      weather-forecast:
+        expire-after-write: 15M
   micrometer:
     export:
       prometheus:
