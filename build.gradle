@@ -29,6 +29,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-rest'
     implementation 'io.quarkus:quarkus-rest-client-jackson'
+    implementation 'io.quarkus:quarkus-cache'
+    implementation 'io.quarkus:quarkus-smallrye-fault-tolerance'
     implementation 'io.quarkus:quarkus-jackson'
     implementation 'io.quarkus:quarkus-scheduler'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'

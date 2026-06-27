@@ -1,4 +1,8 @@
 "%test":
+  app:
+    weather:
+      preload:
+        enabled: false
   quarkus:
     datasource:
       enabled: false
