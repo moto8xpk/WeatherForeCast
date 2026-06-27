@@ -12,8 +12,8 @@ import org.openweather.domain.OpenWeatherMapResponse;
 @ApplicationScoped
 public class WeatherService {
 
-    static final String METRIC = "metric";
-    static final String IMPERIAL = "imperial";
+    public static final String METRIC = "metric";
+    public static final String IMPERIAL = "imperial";
 
     @ConfigProperty(name="quarkus.rest-client.weather-openapi.apikey")
     String apiKey;

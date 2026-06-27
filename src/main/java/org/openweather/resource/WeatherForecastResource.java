@@ -49,7 +49,7 @@ public class WeatherForecastResource {
     @GET
     @Path("/current")
     public OpenWeatherMapResponse current(@RestQuery("cityId") int cityId,
-                                          @RestQuery("units") @DefaultValue("metric") String units) {
+                                          @RestQuery("units") @DefaultValue(WeatherService.METRIC) String units) {
         return weatherService.getCurrentWeatherById(cityId, units);
     }
 
@@ -59,7 +59,7 @@ public class WeatherForecastResource {
     @GET
     @Path("/forecast")
     public ForecastResponse forecast(@RestQuery("cityId") int cityId,
-                                     @RestQuery("units") @DefaultValue("metric") String units) {
+                                     @RestQuery("units") @DefaultValue(WeatherService.METRIC) String units) {
         return weatherService.getForecastById(cityId, units);
     }
 }

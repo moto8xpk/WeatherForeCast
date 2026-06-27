@@ -40,8 +40,8 @@ public class WeatherFetchJob {
         log.info("Warming weather cache for {} cities", City.values().length);
         List<CompletableFuture<Void>> futures = Arrays.stream(City.values())
                 .map(city -> CompletableFuture.runAsync(() -> {
-                    weatherService.getCurrentWeatherById(city.getCityId(), "metric");
-                    weatherService.getForecastById(city.getCityId(), "metric");
+                    weatherService.getCurrentWeatherById(city.getCityId(), WeatherService.METRIC);
+                    weatherService.getForecastById(city.getCityId(), WeatherService.METRIC);
                 }))
                 .toList();
 
@@ -56,7 +56,7 @@ public class WeatherFetchJob {
     public void fetchAndStoreWeatherData() {
         List<CompletableFuture<OpenWeatherMapResponse>> futures = Arrays.stream(City.values())
                 .map(city -> CompletableFuture.supplyAsync(
-                        () -> weatherService.getCurrentWeatherById(city.getCityId(), "metric")))
+                        () -> weatherService.getCurrentWeatherById(city.getCityId(), WeatherService.METRIC)))
                 .toList();
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))

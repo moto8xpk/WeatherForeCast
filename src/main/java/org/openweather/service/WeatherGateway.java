@@ -13,6 +13,7 @@ import org.openweather.domain.OpenWeatherMapResponse;
 import org.openweather.domain.RetryableWeatherException;
 
 import java.time.temporal.ChronoUnit;
+import java.util.function.Supplier;
 
 /**
  * Network boundary to OpenWeather for the id-based endpoints. Lives in its own bean so the
@@ -35,35 +36,29 @@ public class WeatherGateway {
     @CacheResult(cacheName = "weather-current")
     @Retry(maxRetries = 2, delay = 1500, delayUnit = ChronoUnit.MILLIS, retryOn = RetryableWeatherException.class)
     public OpenWeatherMapResponse currentByCity(int cityId, String units) {
-        try {
-            return openWeatherMapClient.getCurrentWeatherById(cityId, apiKey, units, lang);
-        } catch (WebApplicationException e) {
-            throw wrapIfTransient(e);
-        } catch (ProcessingException e) {
-            throw new RetryableWeatherException(e);
-        }
+        return execute(() -> openWeatherMapClient.getCurrentWeatherById(cityId, apiKey, units, lang));
     }
 
     @CacheResult(cacheName = "weather-forecast")
     @Retry(maxRetries = 2, delay = 1500, delayUnit = ChronoUnit.MILLIS, retryOn = RetryableWeatherException.class)
     public ForecastResponse forecastByCity(int cityId, String units) {
-        try {
-            return openWeatherMapClient.getForecast(cityId, apiKey, units, lang);
-        } catch (WebApplicationException e) {
-            throw wrapIfTransient(e);
-        } catch (ProcessingException e) {
-            throw new RetryableWeatherException(e);
-        }
+        return execute(() -> openWeatherMapClient.getForecast(cityId, apiKey, units, lang));
     }
 
     /**
-     * 5xx → retryable; 4xx → rethrow unchanged so it is NOT retried (PRD §F8).
+     * Runs an OpenWeather call and classifies failures for the {@code @Retry} policy (PRD §F8):
+     * network errors and 5xx are wrapped as retryable; 4xx are rethrown unchanged so they are NOT retried.
      */
-    private RuntimeException wrapIfTransient(WebApplicationException e) {
-        int status = e.getResponse() != null ? e.getResponse().getStatus() : 0;
-        if (status >= 500 || status == 0) {
-            return new RetryableWeatherException(e);
+    private <T> T execute(Supplier<T> call) {
+        try {
+            return call.get();
+        } catch (WebApplicationException e) {
+            if (e.getResponse().getStatus() >= 500) {
+                throw new RetryableWeatherException(e);
+            }
+            throw e;
+        } catch (ProcessingException e) {
+            throw new RetryableWeatherException(e);
         }
-        return e;
     }
 }
